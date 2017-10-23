@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html ng-app="myapp">
+  <head>
+    <title><%= title %></title>
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet', href='/css/bootstrap.css'/>
+    <link rel='stylesheet', href='/css/bootstrap.min.css'/>
+    <link rel='stylesheet' href='/stylesheets/main.css' />
+   
+   	<script src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js'/>
+    <script src='./js/bootstrap.min.js'></script>
+    <script src='./js/bootstrap.js'></script>
+    
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route.js"></script>
+	
+ 	<script src='./angular/routes.js' ></script> 
+ 	
+	 <style>
+	 .border{
+	 	border: 1px solid #ccc;
+	 	height:530px;
+	 }
+	 .active{
+	 	border-color:#2e6da4;
+	 }
+	 .community:hover{
+	 	cursor:pointer;
+	 }
+	 .highlight {
+	    background-color: #f7f7f9;
+	    padding: 9px 14px;
+	    border-bottom: 1px solid #eeeddd;
+	  }
+	  .highlight-header{
+	  	background-color: #fff;
+	    padding: 9px 14px;
+	    font-size:10px;
+	  }
+	 </style>
+ 
+  </head>
+<body ng-controller="myCtrl">
+
+       <div style="width:60%; align:center; margin-left:300px;"> <br><br><br>
+				<button ng-show="addsensorvar" ng-init="addsensorvar=true" class="btn btn-default btn-primary" ng-click="myFunction()">Add sensor</button>
+				<div ng-show="myVar" ng-init="myVar=false" class="panel panel-default" style="width:700px;">
+					<div class="panel-heading">Add Sensor</div>
+					<div class="panel-body"><br>
+						<form ng-submit="addSensor()">
+							<div style="width:50px; height:auto; display:inline-block;}"></div>
+							Type: <select ng-model="getType" ng-options="x for x in sensorTypes"></select>
+							<div style="width:50px; height:auto; display:inline-block;}"></div>
+							Location: <select ng-model="getLocation" ng-options="loc for loc in sensorLocations"></select>
+							<div style="width:50px; height:auto; display:inline-block;}"></div>
+							<input type="submit" value="Add" class="btn btn-primary" ng-click="myFunction1()">
+						</form><br><br>
+					</div>
+				</div><br><br/>      
+						<table ng-show="myVar1" ng-init="myVar1=false" class="table table-hover" style="width:700px;">
+							<thead>
+								<th>Type</th>
+								<th>Location</th>
+								<th>Status(running/terminated)</th>
+								<th>Manage</th>
+							</thead>
+							<tbody>
+							  <tr ng-repeat="sensordetail in sensordetails">
+									<td>{{sensordetail.type}}</td>
+									<td>{{sensordetail.location}}</td>
+									<td>{{sensordetail.status}}</td>
+									<td>
+										<div class="btn-group">
+										<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+										Action <span class="caret"></span></button>
+											<ul class="dropdown-menu" role="menu">
+											    <li><a href="#">Start</a></li>
+												<li><a href="#">Stop</a></li>
+												<li><a href="#">Terminate</a></li>
+												<li><a href="#">Delete</a></li>
+											</ul>
+										</div>
+								    </td>
+							  </tr>
+					        </tbody>
+						</table>	
+		</div>
+	<script>	
+	angular.module("myapp", []).controller("myCtrl", function($scope,$http) {
+		$scope.sensordetails = [];		
+		
+		$scope.myFunction = function() {
+				$scope.myVar="true";
+				$scope.addsensorvar="false";
+		}
+		$scope.myFunction1 = function() {
+				$scope.myVar1="true";
+		}
+		$http.get("/sensors").success(function(response){
+		console.log(response);
+			if(response.errMsg == "Success"){
+				$scope.myVar1="true";
+				$(response.data).each(function(key,objSensor){
+					$scope.sensordetails.push({'type':objSensor.type,'location':objSensor.location, 'status':objSensor.status});
+				});
+				
+			}
+		});
+		$scope.sensorTypes=['Temperature','Pressure','Humidity','Gas'];
+		$scope.sensorLocations=['San Diego','Los Angeles','Las Vegas','San Francisco','San Jose'];
+		$scope.addSensor = function() {
+			if ($scope.getType && $scope.getLocation) {
+			//
+				$http.post('/addSensor', {'type':$scope.getType,'location':$scope.getLocation, 'status': 'Stopped'}).
+		  		success(function(data, status, headers, config) {
+			  			$scope.sensordetails.push({'type':$scope.getType,'location':$scope.getLocation});
+						var dataObj	=	{
+									type : $scope.getType,
+									location : $scope.getLocation
+						};
+						$scope.getType='';
+						$scope.getLocation='';
+		  		}).error(function(data, status, headers, config) {
+    					// called asynchronously if an error occurs
+    					// or server returns response with an error status.
+  				});
+			};
+		}
+	});
+	</script>
+  </body>
+</html>

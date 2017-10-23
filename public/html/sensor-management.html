@@ -1,0 +1,60 @@
+<style>
+.table > thead > tr > th {
+    background: rgb(28, 175, 154) none repeat scroll 0 0;
+    color: #fff;
+}
+</style>
+<div class="row">
+	<div class="col-md-3">   
+		<button ng-show="addsensorvar" ng-init="addsensorvar=true" class="btn btn-default btn-primary" ng-click="myFunction()"><i class="fa fa-plus" style="margin-right:10px;"></i>Add sensor</button>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12"> 
+		<div ng-show="myVar" ng-init="myVar=false" class="panel panel-default">
+			<div class="panel-heading">Add Sensor</div>
+			<div class="panel-body">
+				<form ng-submit="addSensor()">
+					<div style="width:50px; height:auto; display:inline-block;}"></div>
+					Type: <select ng-model="getType" ng-options="x for x in sensorTypes"></select>
+					<div style="width:50px; height:auto; display:inline-block;}"></div>
+					Location: <select ng-model="getLocation" ng-options="loc for loc in sensorLocations"></select>
+					<div style="width:50px; height:auto; display:inline-block;}"></div>
+					<input type="submit" value="Add" class="btn btn-primary" ng-click="myFunction1()">
+					<input type="submit" value="Cancel" class="btn btn-primary" ng-click="cancelSensorAdd()">
+				</form>
+			</div>
+		</div>  
+	</div>
+</div>  
+<div class="row" style="margin-top:10px">
+	<div class="col-md-12"> 
+		<table ng-show="myVar1" ng-init="myVar1=false" class="table table-hover">
+			<thead>
+				<th>Type</th>
+				<th>Location</th>
+				<th>Status(running/terminated)</th>
+				<th>Manage</th>
+			</thead>
+			<tbody>
+			  <tr ng-repeat="sensordetail in sensordetails">
+					<td style="text-transform:capitalize;">{{sensordetail.sensor}}</td>
+					<td>{{sensordetail.location}}</td>
+					<td>{{sensordetail.status}}</td>
+					<td>
+						<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+						Action <span class="caret"></span></button>
+							<ul class="dropdown-menu" role="menu">
+							    <li><a href="#">Start</a></li>
+								<li><a href="#">Stop</a></li>
+								<li><a href="#">Terminate</a></li>
+								<li><a href="#">Delete</a></li>
+							</ul>
+						</div>
+				    </td>
+			  </tr>
+		       </tbody>
+		</table>	
+	</div>
+</div>
